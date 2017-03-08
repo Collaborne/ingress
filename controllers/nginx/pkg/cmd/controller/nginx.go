@@ -329,6 +329,8 @@ func (n *NGINXController) OnUpdate(ingressCfg ingress.Configuration) ([]byte, er
 	var longestName int
 	var serverNames int
 	for _, srv := range ingressCfg.Servers {
+		// XXX: serverNames should actually be based on the _number_ of server names, not the total size.
+		//      See http://nginx.org/en/docs/http/server_names.html
 		serverNames += len([]byte(srv.Hostname))
 		if longestName < len(srv.Hostname) {
 			longestName = len(srv.Hostname)
