@@ -42,8 +42,10 @@ test: fmt lint vet
 cover:
 	@echo "+ $@"
 	@go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' $(shell go list ${PKG}/... | grep -v vendor) | xargs -L 1 sh -c
-	gover
-	goveralls -coverprofile=gover.coverprofile -service travis-ci -repotoken ${COVERALLS_TOKEN}
+	if [ -n "${COVERALLS_TOKEN}" ]; then \
+		gover; \
+		goveralls -coverprofile=gover.coverprofile -service travis-ci -repotoken ${COVERALLS_TOKEN}; \
+	fi
 
 vet:
 	@echo "+ $@"

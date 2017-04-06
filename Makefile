@@ -44,8 +44,10 @@ test-e2e: ginkgo
 .PHONY: cover
 cover:
 	@go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ${GO_LIST_FILES} | xargs -L 1 sh -c
-	gover
-	goveralls -coverprofile=gover.coverprofile -service travis-ci
+	if [ -n "${COVERALLS_TOKEN}" ]; then \
+		gover; \
+		goveralls -coverprofile=gover.coverprofile -service travis-ci; \
+	fi
 
 .PHONY: vet
 vet:
