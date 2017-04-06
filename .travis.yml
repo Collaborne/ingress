@@ -1,4 +1,6 @@
-sudo: required
+dist: trusty
+sudo: false
+group: beta
 
 services:
   - docker
@@ -15,9 +17,22 @@ go_import_path: k8s.io/ingress
 
 env:
   global:
-    # to add additional secure variables:
-    # docker run --rm caktux/travis-cli encrypt key=value -r kubernetes/ingress
-    - RELEASE="ci-${TRAVIS_BUILD_ID}"
+    - secure: "Hhn+VACdqG7G1MM3OyhZYdWu4hEfr2YfABaNjrOBBxfadwTHCdoy09YxpD9+3Bs76f16c2PevGlwT9BcyI/MzgcwmqbL+nAM3n6MJUgKqxbYtoeM4wdnjS2IWlpU9ISt2r9+pQoMrecLfC/RAT//zWOOGDTc1GMB2em6I+z3PrVoo73cZTsIQGLJkt3z7E65keY3QLIPfhnPEutXZEWB7fcCXwXgq9YUXwkjCbcuRbaqG9uPX2yZvd3vUObxQxfzQZYBAbOBDuYjoO1sE/6/zeKWOcikvo6HjFMdG2UI3sLHuQi70Zg5P3lAxNgxOnSXHW6jY7oJ5rIqZEUUZwZ4ESlEWdwQwva92uSUyvBacd/PAEbjllemyMnIOI3r26uHTyMIOdosshYaacQGdEwqvvmfH5fxX0BGdf7zve1Wx2RX6/3mzqdDT0T1fyD0j3ltDtAYBUVTroNTgas0cyx2sgJkV5Qv0q4RwK79kFQw0t3osLJgcWJdwFZYOl2KSUv1cvZM0mG7Yj2utb+X8OALaNMEerU/OckLEQ33Y34jcbxjp2ZWaxSeRN+A0ujYd3/vcMjaQ9KdtdKAfcoxG2/SlYaGvQ3cBstiAqmtpViKlkzQ52fnPuVEp0sO8uaTyYqPHWZ1PwdHJK/PvjVzU8YfO6ujrIFn5T8t3yN90H68o7c="
+    - secure: "LbB01gBxEBVL/BV7jTkpqCM3M0r7ZDSct94y8pZy9pCX8i6hdH1iOAJYpqpcJHYmyP9dY3at1oS1Pb05Q9zIG7Potjl3qp/QqppWO64PAa3D3/26gOZ8yJ1HWCmN69g1tEiq5UOnBB8HCMIu7aP6EeF11uAEJGDcSTCno/hav/0CFyt2Uyn+6xa9chJxSb6ni8Icx2/iFUCtJUh+9jFGzeZHB3+kU+CTjVsOFVNSicmBtUgUBpfzxCsxPSh8JFTigmg1C/9JfkT/t+c6ud7ka4DTqXsDSxb646q3V3OfN4G5KJVCf7y8RfxwXMYswYdCmZieM2XysKLK6HQM8h67ztnOVdn9Y2bJov0zv8dU0MjRWwLQldMVimjXuepu6ApRAnw/zJ0OBAivkIs9PliwX5LPBzp2GHWWtzKvh6/gv6wUIakYGsFsZGsnVIEAAKX5e7yuakrWBJ9L9HqJA/km4Qe5YJewncnL0Kvpp1FrjASnLKBOT/wR+o5yProgW5kVGSyXv1PPHj5LE8yJzVtQlxJaZ69QDFu1zLI5p8JSv3kn5Pi5MefkHxInMHZDaLcJQjBKXdKT+WE9Baf5jwnU8JMocKDjaAwnzFBovy1424kr5e1tYj35iO/UWWhOlGdnNx7AahRZtinje4tBjfUY3whQzBOKeQX2Odim4vuYE5k="
+
+before_install:
+  - |
+    if [ -n "${TRAVIS_TAG}" ]; then
+      _name=${TRAVIS_TAG}
+    else
+      if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+        _base_name=${TRAVIS_BRANCH}
+      else
+        _base_name=pr${TRAVIS_PULL_REQUEST}
+      fi
+      _name=${_base_name}-`date +%Y%m%dT%H%M%S`-${TRAVIS_COMMIT}
+    fi
+    export RELEASE=`echo ${_name} | tr -cd '[\-._[:alnum:]]'`
 
 install:
   - go get github.com/golang/lint/golint
@@ -31,3 +46,9 @@ before_script:
 script:  
   - make fmt lint vet cover
   #- make test-e2e
+
+deploy:
+  provider: script
+  script: "${SHELL} -c 'make docker-push DOCKER=docker PREFIX=499577160181.dkr.ecr.eu-west-1.amazonaws.com/google_containers/nginx-ingress-controller'"
+  on:
+    all_branches: true
