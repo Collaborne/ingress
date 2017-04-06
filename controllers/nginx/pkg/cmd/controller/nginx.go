@@ -327,9 +327,7 @@ func (n *NGINXController) SetListers(lister ingress.StoreLister) {
 // if an error is returned means requeue the update
 func (n *NGINXController) OnUpdate(ingressCfg ingress.Configuration) ([]byte, error) {
 	var longestName int
-	var serverNames int
 	for _, srv := range ingressCfg.Servers {
-		serverNames += len([]byte(srv.Hostname))
 		if longestName < len(srv.Hostname) {
 			longestName = len(srv.Hostname)
 		}
@@ -356,7 +354,7 @@ func (n *NGINXController) OnUpdate(ingressCfg ingress.Configuration) ([]byte, er
 			cfg.ServerNameHashBucketSize, nameHashBucketSize)
 		cfg.ServerNameHashBucketSize = nameHashBucketSize
 	}
-	serverNameHashMaxSize := nextPowerOf2(serverNames)
+	serverNameHashMaxSize := nextPowerOf2(len(ingressCfg.Servers))
 	if serverNameHashMaxSize > cfg.ServerNameHashMaxSize {
 		glog.V(3).Infof("adjusting ServerNameHashMaxSize variable from %v to %v",
 			cfg.ServerNameHashMaxSize, serverNameHashMaxSize)
