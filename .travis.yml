@@ -10,6 +10,10 @@ language: go
 notifications:
   email: true
 
+cache:
+  directories:
+    - "$HOME/.cache/pip"
+
 go:
   - 1.7
 
@@ -33,6 +37,8 @@ before_install:
       _name=${_base_name}-`date +%Y%m%dT%H%M%S`-${TRAVIS_COMMIT}
     fi
     export RELEASE=`echo ${_name} | tr -cd '[\-._[:alnum:]]'`
+  - pip install --user awscli | cat
+  - eval `$HOME/.local/bin/aws ecr get-login --region eu-west-1`
 
 install:
   - go get github.com/golang/lint/golint
