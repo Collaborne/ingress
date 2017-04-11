@@ -146,7 +146,7 @@ var (
 
 // buildResolvers returns the resolvers reading the /etc/resolv.conf file
 func buildResolvers(a interface{}) string {
-	// NGINX need IPV6 addresses to be surrounded by brakets
+	// NGINX need IPV6 addresses to be surrounded by brackets
 	nss := a.([]net.IP)
 	if len(nss) == 0 {
 		return ""
