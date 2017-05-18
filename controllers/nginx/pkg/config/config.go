@@ -84,6 +84,9 @@ var (
 type Configuration struct {
 	defaults.Backend `json:",squash"`
 
+	// Sets the name of the configmap that contains the headers to pass to the client
+	AddHeaders string `json:"add-headers,omitempty"`
+
 	// EnableDynamicTLSRecords enables dynamic TLS record sizes
 	// https://blog.cloudflare.com/optimizing-tls-over-tcp-to-reduce-latency
 	// By default this is enabled
@@ -337,6 +340,7 @@ func (cfg Configuration) BuildLogFormatUpstream() string {
 // TemplateConfig contains the nginx configuration to render the file nginx.conf
 type TemplateConfig struct {
 	ProxySetHeaders     map[string]string
+	AddHeaders          map[string]string
 	MaxOpenFiles        int
 	BacklogSize         int
 	Backends            []*ingress.Backend
