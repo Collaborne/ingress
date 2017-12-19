@@ -38,7 +38,7 @@ before_install:
     fi
     export RELEASE=`echo ${_name} | tr -cd '[\-._[:alnum:]]'`
   - pip install --user awscli | cat
-  - eval `$HOME/.local/bin/aws ecr get-login --region eu-west-1`
+  - eval `$HOME/.local/bin/aws ecr get-login --region eu-west-1 --no-include-email`
 
 install:
   - go get github.com/golang/lint/golint
