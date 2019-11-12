@@ -29,14 +29,15 @@ import (
 )
 
 const (
-	annotationSecureUpstream     = "ingress.kubernetes.io/secure-backends"
-	annotationUpsMaxFails        = "ingress.kubernetes.io/upstream-max-fails"
-	annotationUpsFailTimeout     = "ingress.kubernetes.io/upstream-fail-timeout"
-	annotationPassthrough        = "ingress.kubernetes.io/ssl-passthrough"
-	annotationAffinityType       = "ingress.kubernetes.io/affinity"
-	annotationAffinityCookieName = "ingress.kubernetes.io/session-cookie-name"
-	annotationAffinityCookieHash = "ingress.kubernetes.io/session-cookie-hash"
-	annotationAuthTlsSecret      = "ingress.kubernetes.io/auth-tls-secret"
+	annotationSecureUpstream      = "ingress.kubernetes.io/secure-backends"
+	annotationUpsMaxFails         = "ingress.kubernetes.io/upstream-max-fails"
+	annotationUpsFailTimeout      = "ingress.kubernetes.io/upstream-fail-timeout"
+	annotationPassthrough         = "ingress.kubernetes.io/ssl-passthrough"
+	annotationAffinityType        = "ingress.kubernetes.io/affinity"
+	annotationAffinityCookieName  = "ingress.kubernetes.io/session-cookie-name"
+	annotationAffinityCookieHash  = "ingress.kubernetes.io/session-cookie-hash"
+	annotationAffinityCookieFlags = "ingress.k8s.collaborne.com/session-cookie-flags"
+	annotationAuthTlsSecret       = "ingress.kubernetes.io/auth-tls-secret"
 )
 
 type mockCfg struct {

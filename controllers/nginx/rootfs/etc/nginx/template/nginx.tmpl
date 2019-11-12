@@ -205,7 +205,7 @@ http {
     {{range $name, $upstream := $backends}}
     upstream {{$upstream.Name}} {
         {{ if eq $upstream.SessionAffinity.AffinityType "cookie" }}
-        sticky hash={{$upstream.SessionAffinity.CookieSessionAffinity.Hash}} name={{$upstream.SessionAffinity.CookieSessionAffinity.Name}}  httponly;
+        sticky hash={{$upstream.SessionAffinity.CookieSessionAffinity.Hash}} name={{$upstream.SessionAffinity.CookieSessionAffinity.Name}}  httponly {{$upstream.SessionAffinity.CookieSessionAffinity.Flags}};
         {{ else }}
         least_conn;
         {{ end }}

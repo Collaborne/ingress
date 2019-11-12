@@ -36,6 +36,10 @@ const (
 	// one isn't supplied and affinity is set to "cookie".
 	annotationAffinityCookieHash = "ingress.kubernetes.io/session-cookie-hash"
 	defaultAffinityCookieHash    = "md5"
+
+	// Additional flags to set on the session cookie; only allowed value is "secure"
+	annotationAffinityCookieFlags = "ingress.k8s.collaborne.com/session-cookie-flags"
+	defaultAffinityCookieFlags    = ""
 )
 
 var (
@@ -55,6 +59,8 @@ type CookieConfig struct {
 	Name string `json:"name"`
 	// The hash that will be used to encode the cookie in case of cookie affinity type
 	Hash string `json:"hash"`
+	// Additional flags
+	Flags string `json:"flags"`
 }
 
 // CookieAffinityParse gets the annotation values related to Cookie Affinity
@@ -75,9 +81,17 @@ func CookieAffinityParse(ing *extensions.Ingress) *CookieConfig {
 		sh = defaultAffinityCookieHash
 	}
 
+	sf, err := parser.GetStringAnnotation(annotationAffinityCookieFlags, ing)
+
+	if err != nil || (sf != "" && sf != "secure") {
+		glog.V(3).Infof("Invalid or no annotation value found in Ingress %v: %v. Setting it to default %v", ing.Name, annotationAffinityCookieFlags, defaultAffinityCookieFlags)
+		sf = defaultAffinityCookieFlags
+	}
+
 	return &CookieConfig{
-		Name: sn,
-		Hash: sh,
+		Name:  sn,
+		Hash:  sh,
+		Flags: sf,
 	}
 }
 
