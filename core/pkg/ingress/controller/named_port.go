@@ -63,7 +63,7 @@ func (ic *GenericController) checkSvcForUpdate(svc *api_v1.Service) error {
 		if err != nil {
 			portNum, err := findPort(pod, servicePort)
 			if err != nil {
-				glog.V(4).Infof("failed to find port for service %s/%s: %v", portNum, svc.Namespace, svc.Name, err)
+				glog.V(4).Infof("failed to find port for service %s/%s: %v", svc.Namespace, svc.Name, err)
 				continue
 			}
 
