@@ -29,14 +29,15 @@ import (
 )
 
 const (
-	annotationSecureUpstream     = "ingress.kubernetes.io/secure-backends"
-	annotationUpsMaxFails        = "ingress.kubernetes.io/upstream-max-fails"
-	annotationUpsFailTimeout     = "ingress.kubernetes.io/upstream-fail-timeout"
-	annotationPassthrough        = "ingress.kubernetes.io/ssl-passthrough"
-	annotationAffinityType       = "ingress.kubernetes.io/affinity"
-	annotationAffinityCookieName = "ingress.kubernetes.io/session-cookie-name"
-	annotationAffinityCookieHash = "ingress.kubernetes.io/session-cookie-hash"
-	annotationAuthTlsSecret      = "ingress.kubernetes.io/auth-tls-secret"
+	annotationSecureUpstream      = "ingress.kubernetes.io/secure-backends"
+	annotationUpsMaxFails         = "ingress.kubernetes.io/upstream-max-fails"
+	annotationUpsFailTimeout      = "ingress.kubernetes.io/upstream-fail-timeout"
+	annotationPassthrough         = "ingress.kubernetes.io/ssl-passthrough"
+	annotationAffinityType        = "ingress.kubernetes.io/affinity"
+	annotationAffinityCookieName  = "ingress.kubernetes.io/session-cookie-name"
+	annotationAffinityCookieHash  = "ingress.kubernetes.io/session-cookie-hash"
+	annotationAffinityCookieFlags = "ingress.k8s.collaborne.com/session-cookie-flags"
+	annotationAuthTlsSecret       = "ingress.kubernetes.io/auth-tls-secret"
 )
 
 type mockCfg struct {
@@ -195,18 +196,20 @@ func TestAffinitySession(t *testing.T) {
 		affinitytype string
 		hash         string
 		name         string
+		flags        string
 	}{
-		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "md5", annotationAffinityCookieName: "route"}, "cookie", "md5", "route"},
-		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "xpto", annotationAffinityCookieName: "route1"}, "cookie", "md5", "route1"},
-		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "", annotationAffinityCookieName: ""}, "cookie", "md5", "INGRESSCOOKIE"},
-		{map[string]string{}, "", "", ""},
-		{nil, "", "", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "md5", annotationAffinityCookieName: "route"}, "cookie", "md5", "route", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "xpto", annotationAffinityCookieName: "route1"}, "cookie", "md5", "route1", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "", annotationAffinityCookieName: ""}, "cookie", "md5", "INGRESSCOOKIE", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "md5", annotationAffinityCookieName: "route", annotationAffinityCookieFlags: "secure"}, "cookie", "md5", "route", "secure"},
+		{map[string]string{}, "", "", "", ""},
+		{nil, "", "", "", ""},
 	}
 
 	for _, foo := range fooAnns {
 		ing.SetAnnotations(foo.annotations)
 		r := ec.SessionAffinity(ing)
-		t.Logf("Testing pass %v %v %v", foo.affinitytype, foo.hash, foo.name)
+		t.Logf("Testing pass %v %v %v %v", foo.affinitytype, foo.hash, foo.name, foo.flags)
 		if r == nil {
 			t.Errorf("Returned nil but expected a SessionAffinity.AffinityConfig")
 			continue
