@@ -817,8 +817,9 @@ func (ic *GenericController) createUpstreams(data []interface{}) map[string]*ing
 				if upstream.SessionAffinity.AffinityType == "" {
 					upstream.SessionAffinity.AffinityType = affinity.AffinityType
 					if affinity.AffinityType == "cookie" {
-						upstream.SessionAffinity.CookieSessionAffinity.Name = affinity.CookieConfig.Name
-						upstream.SessionAffinity.CookieSessionAffinity.Hash = affinity.CookieConfig.Hash
+						upstream.SessionAffinity.CookieSessionAffinity.Name  = affinity.CookieConfig.Name
+						upstream.SessionAffinity.CookieSessionAffinity.Hash  = affinity.CookieConfig.Hash
+						upstream.SessionAffinity.CookieSessionAffinity.Flags = affinity.CookieConfig.Flags
 					}
 				}
 
