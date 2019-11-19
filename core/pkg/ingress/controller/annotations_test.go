@@ -196,18 +196,20 @@ func TestAffinitySession(t *testing.T) {
 		affinitytype string
 		hash         string
 		name         string
+		flags        string
 	}{
-		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "md5", annotationAffinityCookieName: "route"}, "cookie", "md5", "route"},
-		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "xpto", annotationAffinityCookieName: "route1"}, "cookie", "md5", "route1"},
-		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "", annotationAffinityCookieName: ""}, "cookie", "md5", "INGRESSCOOKIE"},
-		{map[string]string{}, "", "", ""},
-		{nil, "", "", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "md5", annotationAffinityCookieName: "route"}, "cookie", "md5", "route", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "xpto", annotationAffinityCookieName: "route1"}, "cookie", "md5", "route1", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "", annotationAffinityCookieName: ""}, "cookie", "md5", "INGRESSCOOKIE", ""},
+		{map[string]string{annotationAffinityType: "cookie", annotationAffinityCookieHash: "md5", annotationAffinityCookieName: "route", annotationAffinityCookieFlags: "secure"}, "cookie", "md5", "route", "secure"},
+		{map[string]string{}, "", "", "", ""},
+		{nil, "", "", "", ""},
 	}
 
 	for _, foo := range fooAnns {
 		ing.SetAnnotations(foo.annotations)
 		r := ec.SessionAffinity(ing)
-		t.Logf("Testing pass %v %v %v", foo.affinitytype, foo.hash, foo.name)
+		t.Logf("Testing pass %v %v %v %v", foo.affinitytype, foo.hash, foo.name, foo.flags)
 		if r == nil {
 			t.Errorf("Returned nil but expected a SessionAffinity.AffinityConfig")
 			continue
