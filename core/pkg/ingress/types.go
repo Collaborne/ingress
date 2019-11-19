@@ -178,6 +178,7 @@ type SessionAffinityConfig struct {
 type CookieSessionAffinity struct {
 	Name string `json:"name"`
 	Hash string `json:"hash"`
+	Flags string `json:"flags"`
 }
 
 // Endpoint describes a kubernetes endpoint in a backend
